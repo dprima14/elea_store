@@ -1,9 +1,11 @@
 <?php
-// Konfigurasi koneksi database
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'elea_store');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+require_once __DIR__ . '/env.php';
+$_env = get_env_vars();
+
+define('DB_HOST', $_env['DB_HOST'] ?? 'localhost');
+define('DB_NAME', $_env['DB_NAME'] ?? 'elea_store');
+define('DB_USER', $_env['DB_USER'] ?? 'root');
+define('DB_PASS', $_env['DB_PASS'] ?? '');
 
 try {
     $pdo = new PDO(
