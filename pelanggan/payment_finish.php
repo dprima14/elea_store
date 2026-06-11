@@ -111,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'retry
         'customer_details'    => ['first_name' => $order['nama_penerima'], 'phone' => $order['no_telepon_kirim'], 'email' => $email],
         'item_details'        => $item_details,
         'callbacks'           => ['finish' => $finish_url_r],
+        'enabled_payments'    => ['credit_card','bca_va','bni_va','bri_va','permata_va','other_va','gopay','shopeepay','qris','other_qris','indomaret','alfamart'],
     ];
     $snap_res = midtrans_create_token($snap_body);
 
@@ -253,6 +254,7 @@ require_once '../includes/header.php';
             <div class="pf-step active"><i class="fas fa-clock"></i> Bayar Sekarang</div>
             <div class="pf-step todo"><i class="fas fa-box"></i> Diproses</div>
         </div>
+
         <div class="pf-alert">
             <i class="fas fa-info-circle"></i> Jika Anda sudah membayar namun status belum berubah, tunggu beberapa menit atau hubungi kami via WhatsApp.
         </div>

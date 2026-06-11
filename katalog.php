@@ -13,7 +13,10 @@ $jenis_list = $pdo->query(
 )->fetchAll(PDO::FETCH_COLUMN);
 
 // Query produk
-$sql    = "SELECT id_produk, nama_produk, harga, stok, gambar_produk, jenis_produk FROM produk WHERE 1=1";
+$sql = "SELECT p.id_produk, p.nama_produk, p.harga, p.stok, p.gambar_produk, p.jenis_produk,
+        COALESCE((SELECT GROUP_CONCAT(pg.gambar ORDER BY pg.urutan SEPARATOR '|')
+                  FROM produk_gambar pg WHERE pg.id_produk = p.id_produk), '') AS extra_imgs
+        FROM produk p WHERE 1=1";
 $params = [];
 
 if ($search !== '') {
@@ -91,16 +94,29 @@ include 'includes/header.php';
 
         <div class="products-grid">
             <?php foreach ($products as $p): ?>
+            <?php
+            $card_imgs = [];
+            if (!empty($p['gambar_produk'])) $card_imgs[] = $p['gambar_produk'];
+            if (!empty($p['extra_imgs'])) $card_imgs = array_merge($card_imgs, explode('|', $p['extra_imgs']));
+            $card_imgs_json = htmlspecialchars(implode('|', $card_imgs));
+            ?>
             <div class="product-card">
-                <div class="product-image">
+                <div class="product-image card-img-wrap" data-images="<?= $card_imgs_json ?>">
                     <?php if (!empty($p['gambar_produk'])): ?>
-                    <img src="assets/images/products/<?= htmlspecialchars($p['gambar_produk']) ?>"
+                    <img class="card-main-img" src="assets/images/products/<?= htmlspecialchars($p['gambar_produk']) ?>"
                          alt="<?= htmlspecialchars($p['nama_produk']) ?>"
                          style="width:100%;height:100%;object-fit:cover;">
                     <?php else: ?>
                     <svg viewBox="0 0 24 24" style="width:64px;height:64px;stroke:#dfb0a2;fill:none;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
+                    <?php endif; ?>
+                    <?php if (count($card_imgs) > 1): ?>
+                    <div class="card-img-dots">
+                        <?php for ($di = 0; $di < min(count($card_imgs), 6); $di++): ?>
+                        <span class="card-img-dot <?= $di===0?'active':'' ?>"></span>
+                        <?php endfor; ?>
+                    </div>
                     <?php endif; ?>
                     <?php if ($p['stok'] == 0): ?>
                     <span class="product-badge" style="background:#dc2626;">HABIS</span>
@@ -138,6 +154,39 @@ include 'includes/header.php';
 .jenis-pill:hover{background:#fce9e3;}
 .jenis-pill.active{background:linear-gradient(135deg,#953b22,#9e5848);color:white;border-color:transparent;}
 .results-count{font-size:.8125rem;color:#6b7280;margin-bottom:1rem;}
+/* Card image slider */
+.card-img-wrap{position:relative;overflow:hidden;}
+.card-main-img{transition:opacity .25s;}
+.card-img-dots{position:absolute;bottom:.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.3rem;z-index:3;pointer-events:none;}
+.card-img-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);transition:all .2s;}
+.card-img-dot.active{background:white;transform:scale(1.35);}
 </style>
+<script>
+document.querySelectorAll('.card-img-wrap[data-images]').forEach(function(wrap) {
+    var raw  = wrap.getAttribute('data-images') || '';
+    var imgs = raw.split('|').filter(Boolean);
+    if (imgs.length <= 1) return;
+    var imgEl = wrap.querySelector('.card-main-img');
+    var dots  = wrap.querySelectorAll('.card-img-dot');
+    if (!imgEl) return;
+    var idx = 0, timer = null;
+    function goTo(i) {
+        idx = (i + imgs.length) % imgs.length;
+        imgEl.style.opacity = '0';
+        setTimeout(function(){
+            imgEl.src = 'assets/images/products/' + imgs[idx];
+            imgEl.style.opacity = '1';
+        }, 120);
+        dots.forEach(function(d, di){ d.classList.toggle('active', di === idx); });
+    }
+    wrap.addEventListener('mouseenter', function() {
+        timer = setInterval(function(){ goTo(idx + 1); }, 1400);
+    });
+    wrap.addEventListener('mouseleave', function() {
+        clearInterval(timer); timer = null;
+        goTo(0);
+    });
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>

@@ -17,6 +17,18 @@ try {
     die("Koneksi database gagal: " . $e->getMessage());
 }
 
+// Auto-migrate: tabel gambar tambahan per produk
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS produk_gambar (
+        id        INT AUTO_INCREMENT PRIMARY KEY,
+        id_produk INT NOT NULL,
+        gambar    VARCHAR(255) NOT NULL,
+        urutan    INT NOT NULL DEFAULT 0,
+        dibuat    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_pg_produk (id_produk)
+    )");
+} catch (PDOException $e) {}
+
 function fmt_rp(int $n): string {
     return 'Rp ' . number_format($n, 0, ',', '.');
 }

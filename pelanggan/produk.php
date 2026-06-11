@@ -115,6 +115,15 @@ $stmt->execute([$id]);
 $p = $stmt->fetch();
 if (!$p) { header('Location: ../katalog.php'); exit; }
 
+// Gambar tambahan
+$eg_stmt = $pdo->prepare("SELECT gambar FROM produk_gambar WHERE id_produk=? ORDER BY urutan, id");
+$eg_stmt->execute([$id]);
+$extra_imgs = array_column($eg_stmt->fetchAll(), 'gambar');
+$all_images = [];
+if (!empty($p['gambar_produk'])) $all_images[] = $p['gambar_produk'];
+$all_images = array_merge($all_images, $extra_imgs);
+if (empty($all_images)) $all_images[] = null;
+
 // Parse ukuran
 $ukuran_type   = 'none';
 $ukuran_parsed = [];
@@ -156,6 +165,25 @@ require_once '../includes/header.php';
 ?>
 
 <style>
+/* ===== IMAGE SLIDER ===== */
+.prod-slider-wrap{position:relative;}
+.prod-slider-main{border-radius:1.25rem;overflow:hidden;background:linear-gradient(145deg,#fce9e3,#f5d4cb);aspect-ratio:4/5;position:relative;cursor:pointer;border:1px solid #fce9e3;}
+.prod-slider-track{display:flex;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;}
+.prod-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.prod-slide img{width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;}
+.sl-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.88);border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.375rem;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:all .15s;z-index:5;line-height:1;padding:0;}
+.sl-btn:hover{background:white;box-shadow:0 4px 14px rgba(0,0,0,.2);}
+.sl-prev{left:.625rem;}
+.sl-next{right:.625rem;}
+.sl-dots{position:absolute;bottom:.75rem;left:50%;transform:translateX(-50%);display:flex;gap:.4rem;z-index:5;}
+.sl-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;border:none;padding:0;}
+.sl-dot.active{background:white;transform:scale(1.3);}
+.prod-sl-thumbs{display:flex;gap:.5rem;margin-top:.625rem;overflow-x:auto;padding-bottom:.25rem;scrollbar-width:none;}
+.prod-sl-thumbs::-webkit-scrollbar{display:none;}
+.prod-sl-thumb{width:60px;height:60px;border-radius:.625rem;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s;flex-shrink:0;background:#f3f4f6;}
+.prod-sl-thumb.active{border-color:#953b22;}
+.prod-sl-thumb img{width:100%;height:100%;object-fit:cover;}
+/* ======================== */
 .prod-wrap{max-width:1080px;margin:0 auto;padding:1.5rem 1rem 3rem;}
 .breadcrumb{font-size:.8rem;color:#9ca3af;margin-bottom:1.25rem;display:flex;align-items:center;gap:.375rem;flex-wrap:wrap;}
 .breadcrumb a{color:#e69c7f;text-decoration:none;font-weight:500;}
@@ -261,23 +289,51 @@ require_once '../includes/header.php';
 
     <div class="prod-main">
 
-        <!-- GAMBAR -->
+        <!-- GAMBAR / SLIDER -->
         <div>
-            <div class="prod-img-area">
-                <?php if (!empty($p['gambar_produk'])): ?>
-                <img src="../assets/images/products/<?= htmlspecialchars($p['gambar_produk']) ?>"
-                     alt="<?= htmlspecialchars($p['nama_produk']) ?>">
-                <?php else: ?>
-                <svg viewBox="0 0 64 64" style="width:120px;height:120px;stroke:#dfb0a2;fill:none;opacity:.6;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M32 6L6 18l4 8 4-2v26h36V24l4 2 4-8L32 6z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M24 24h16v24H24z"/>
-                </svg>
-                <?php endif; ?>
-                <?php if (!empty($p['jenis_produk'])): ?>
-                <span class="prod-badge-jenis"><?= htmlspecialchars($p['jenis_produk']) ?></span>
-                <?php endif; ?>
-                <?php if ($p['stok'] == 0): ?>
-                <span class="prod-stok-badge">STOK HABIS</span>
+            <div class="prod-slider-wrap">
+                <div class="prod-slider-main" id="slMain">
+                    <div class="prod-slider-track" id="slTrack">
+                        <?php foreach ($all_images as $img): ?>
+                        <div class="prod-slide">
+                            <?php if ($img): ?>
+                            <img src="../assets/images/products/<?= htmlspecialchars($img) ?>"
+                                 alt="<?= htmlspecialchars($p['nama_produk']) ?>">
+                            <?php else: ?>
+                            <svg viewBox="0 0 64 64" style="width:120px;height:120px;stroke:#dfb0a2;fill:none;opacity:.6;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M32 6L6 18l4 8 4-2v26h36V24l4 2 4-8L32 6z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M24 24h16v24H24z"/>
+                            </svg>
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if (count($all_images) > 1): ?>
+                    <button class="sl-btn sl-prev" onclick="slMove(-1)" aria-label="Sebelumnya">&#8249;</button>
+                    <button class="sl-btn sl-next" onclick="slMove(1)"  aria-label="Berikutnya">&#8250;</button>
+                    <div class="sl-dots">
+                        <?php foreach ($all_images as $si => $img): ?>
+                        <button class="sl-dot <?= $si===0?'active':'' ?>" onclick="slGo(<?= $si ?>)"></button>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($p['jenis_produk'])): ?>
+                    <span class="prod-badge-jenis"><?= htmlspecialchars($p['jenis_produk']) ?></span>
+                    <?php endif; ?>
+                    <?php if ($p['stok'] == 0): ?>
+                    <span class="prod-stok-badge">STOK HABIS</span>
+                    <?php endif; ?>
+                </div>
+                <?php if (count($all_images) > 1): ?>
+                <div class="prod-sl-thumbs" id="slThumbs">
+                    <?php foreach ($all_images as $si => $img): ?>
+                    <div class="prod-sl-thumb <?= $si===0?'active':'' ?>" onclick="slGo(<?= $si ?>)">
+                        <?php if ($img): ?>
+                        <img src="../assets/images/products/<?= htmlspecialchars($img) ?>" alt="">
+                        <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -505,6 +561,36 @@ require_once '../includes/header.php';
 </div>
 
 <script>
+// ===== SLIDER =====
+var slIdx = 0, slTotal = <?= count($all_images) ?>;
+var slTrack = document.getElementById('slTrack');
+function slMove(dir) { slGo((slIdx + dir + slTotal) % slTotal); }
+function slGo(idx) {
+    slIdx = idx;
+    if (slTrack) slTrack.style.transform = 'translateX(-' + (idx * 100) + '%)';
+    document.querySelectorAll('.sl-dot').forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+    document.querySelectorAll('.prod-sl-thumb').forEach(function(t,i){
+        t.classList.toggle('active', i===idx);
+        if (i===idx) t.scrollIntoView({inline:'nearest', behavior:'smooth', block:'nearest'});
+    });
+}
+if (slTotal > 1) {
+    var slMainEl = document.getElementById('slMain');
+    var slTouchX = null;
+    slMainEl.addEventListener('touchstart', function(e){ slTouchX = e.touches[0].clientX; }, {passive:true});
+    slMainEl.addEventListener('touchend', function(e){
+        if (slTouchX === null) return;
+        var dx = e.changedTouches[0].clientX - slTouchX;
+        if (Math.abs(dx) > 40) slMove(dx < 0 ? 1 : -1);
+        slTouchX = null;
+    });
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'ArrowLeft')  slMove(-1);
+        if (e.key === 'ArrowRight') slMove(1);
+    });
+}
+// ==================
+
 var selectedSize = <?= $ukuran_type === 'all_size' ? "'All Size'" : "''" ?>;
 var needSize     = <?= ($ukuran_type === 'sizes') ? 'true' : 'false' ?>;
 

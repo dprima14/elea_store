@@ -108,8 +108,9 @@ $snap_body = [
         'phone'      => $telp,
         'email'      => $email,
     ],
-    'item_details' => $item_details,
-    'callbacks'    => ['finish' => $finish_url],
+    'item_details'    => $item_details,
+    'callbacks'       => ['finish' => $finish_url],
+    'enabled_payments'=> ['credit_card','bca_va','bni_va','bri_va','permata_va','other_va','gopay','shopeepay','qris','other_qris','indomaret','alfamart'],
 ];
 
 $snap_res = midtrans_create_token($snap_body);

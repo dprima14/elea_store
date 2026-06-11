@@ -137,6 +137,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $tab = 'profil';
     }
+
+    // EDIT PROFIL
+    if (isset($_POST['edit_profil'])) {
+        $nama_baru  = trim($_POST['nama'] ?? '');
+        $uname_baru = trim($_POST['username'] ?? '');
+        $telp_baru  = trim($_POST['no_telepon'] ?? '');
+        if (empty($nama_baru) || empty($uname_baru)) {
+            $alamat_err = 'Nama dan username wajib diisi.';
+        } else {
+            $chk = $pdo->prepare("SELECT COUNT(*) FROM user WHERE username=? AND id_user!=?");
+            $chk->execute([$uname_baru, $user['id_user']]);
+            if ($chk->fetchColumn() > 0) {
+                $alamat_err = 'Username sudah digunakan oleh akun lain.';
+            } else {
+                $pdo->prepare("UPDATE user SET nama=?, username=?, no_telepon=? WHERE id_user=?")
+                    ->execute([$nama_baru, $uname_baru, $telp_baru, $user['id_user']]);
+                $_SESSION['user']['nama']     = $nama_baru;
+                $_SESSION['user']['username'] = $uname_baru;
+                $alamat_ok = 'Profil berhasil diperbarui!';
+            }
+        }
+        $tab = 'profil';
+    }
 }
 
 // Data profil
@@ -364,17 +387,53 @@ require_once '../includes/header.php';
     <!-- TAB: PROFIL -->
     <div id="tab-profil" class="tab-content" style="<?= $tab!=='profil'?'display:none':'' ?>">
         <div class="pcard">
-            <h3>Informasi Akun</h3>
-            <?php foreach ([
-                ['Nama Lengkap', $profil['nama']],
-                ['Username',     '@'.$profil['username']],
-                ['No. Telepon',  $profil['no_telepon'] ?: '-'],
-            ] as [$l, $v]): ?>
-            <div class="info-row">
-                <span class="info-lbl"><?= $l ?></span>
-                <span class="info-val"><?= htmlspecialchars($v) ?></span>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h3 style="margin:0;">Informasi Akun</h3>
+                <button type="button" id="btnEditProfil" onclick="toggleEditProfil()"
+                    style="display:inline-flex;align-items:center;gap:.375rem;padding:.35rem .875rem;border:1.5px solid #f5d4cb;border-radius:9999px;background:#fff8f6;color:#953b22;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit;">
+                    <i class="fas fa-pen"></i> Edit Profil
+                </button>
             </div>
-            <?php endforeach; ?>
+
+            <!-- INFO READ-ONLY -->
+            <div id="infoAkun">
+                <?php foreach ([
+                    ['Nama Lengkap', $profil['nama']],
+                    ['Username',     '@'.$profil['username']],
+                    ['No. Telepon',  $profil['no_telepon'] ?: '-'],
+                ] as [$l, $v]): ?>
+                <div class="info-row">
+                    <span class="info-lbl"><?= $l ?></span>
+                    <span class="info-val"><?= htmlspecialchars($v) ?></span>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- FORM EDIT (tersembunyi) -->
+            <div id="formEditProfil" style="display:none;margin-top:.75rem;border-top:1px solid #fce9e3;padding-top:1rem;">
+                <form method="POST" action="profil.php?tab=profil">
+                    <input type="hidden" name="edit_profil" value="1">
+                    <div class="fg-p">
+                        <label>Nama Lengkap <span style="color:#dc2626;">*</span></label>
+                        <input type="text" name="nama" value="<?= htmlspecialchars($profil['nama']) ?>" required>
+                    </div>
+                    <div class="fg-p">
+                        <label>Username <span style="color:#dc2626;">*</span></label>
+                        <input type="text" name="username" value="<?= htmlspecialchars($profil['username']) ?>" required>
+                    </div>
+                    <div class="fg-p">
+                        <label>No. Telepon</label>
+                        <input type="text" name="no_telepon" value="<?= htmlspecialchars($profil['no_telepon'] ?? '') ?>" placeholder="08xx...">
+                    </div>
+                    <div style="display:flex;gap:.625rem;">
+                        <button type="submit" class="btn-pink" style="flex:1;">Simpan Perubahan</button>
+                        <button type="button" onclick="toggleEditProfil()"
+                            style="flex:1;padding:.7rem;border:1.5px solid #e5e7eb;border-radius:.75rem;background:white;color:#6b7280;font-weight:700;font-size:.875rem;cursor:pointer;">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="pcard">
             <h3>Ubah Password</h3>
@@ -611,6 +670,23 @@ require_once '../includes/header.php';
 </div>
 
 <script>
+function toggleEditProfil() {
+    var form = document.getElementById('formEditProfil');
+    var info = document.getElementById('infoAkun');
+    var btn  = document.getElementById('btnEditProfil');
+    var open = form.style.display === 'none';
+    form.style.display = open ? 'block' : 'none';
+    info.style.display = open ? 'none'  : 'block';
+    btn.innerHTML = open
+        ? '<i class="fas fa-times"></i> Batal'
+        : '<i class="fas fa-pen"></i> Edit Profil';
+}
+
+<?php if ($alamat_err && isset($_POST['edit_profil'])): ?>
+// Buka form edit otomatis jika ada error validasi
+window.addEventListener('DOMContentLoaded', function() { toggleEditProfil(); });
+<?php endif; ?>
+
 function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));

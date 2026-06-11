@@ -5,6 +5,25 @@ session_start();
 require_once '../config/db.php';
 require_once 'inc/header.php';
 
+function simpanGambarTambahan(int $id_produk, PDO $pdo): void {
+    if (empty($_FILES['extra_images']['name'][0])) return;
+    $dir = '../assets/images/products/';
+    $cur = $pdo->prepare("SELECT COALESCE(MAX(urutan),0) FROM produk_gambar WHERE id_produk=?");
+    $cur->execute([$id_produk]);
+    $next = (int)$cur->fetchColumn() + 1;
+    foreach ($_FILES['extra_images']['tmp_name'] as $i => $tmp) {
+        if (empty($_FILES['extra_images']['name'][$i]) || !is_uploaded_file($tmp)) continue;
+        $ext = strtolower(pathinfo($_FILES['extra_images']['name'][$i], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg','jpeg','png','webp'])) continue;
+        if ($_FILES['extra_images']['size'][$i] > 2097152) continue;
+        $fname = uniqid('prod_') . '.' . $ext;
+        if (move_uploaded_file($tmp, $dir . $fname)) {
+            $pdo->prepare("INSERT INTO produk_gambar (id_produk, gambar, urutan) VALUES (?,?,?)")
+                ->execute([$id_produk, $fname, $next++]);
+        }
+    }
+}
+
 // Auto-migrate: tambah kolom baru jika belum ada
 foreach ([
     "ALTER TABLE produk ADD COLUMN jenis_produk VARCHAR(50) NULL AFTER deskripsi_produk",
@@ -120,16 +139,45 @@ if (isset($_GET['hapus'])) {
         $path = '../assets/images/products/' . $row['gambar_produk'];
         if (file_exists($path)) unlink($path);
     }
+    $eg_del = $pdo->prepare("SELECT gambar FROM produk_gambar WHERE id_produk=?");
+    $eg_del->execute([$id]);
+    foreach ($eg_del->fetchAll() as $eg) {
+        $ep = '../assets/images/products/' . $eg['gambar'];
+        if (file_exists($ep)) unlink($ep);
+    }
+    $pdo->prepare("DELETE FROM produk_gambar WHERE id_produk=?")->execute([$id]);
     $pdo->prepare("DELETE FROM produk WHERE id_produk = ?")->execute([$id]);
     $msg_ok = 'Produk berhasil dihapus.';
 }
 
+// HAPUS GAMBAR TAMBAHAN
+if (isset($_GET['hapus_gambar'])) {
+    $gid   = intval($_GET['hapus_gambar']);
+    $gstmt = $pdo->prepare("SELECT gambar, id_produk FROM produk_gambar WHERE id=?");
+    $gstmt->execute([$gid]);
+    $grow  = $gstmt->fetch();
+    if ($grow) {
+        $gpath = '../assets/images/products/' . $grow['gambar'];
+        if (file_exists($gpath)) unlink($gpath);
+        $pdo->prepare("DELETE FROM produk_gambar WHERE id=?")->execute([$gid]);
+        $msg_ok = 'Gambar berhasil dihapus.';
+        header('Location: kelola_produk.php?edit=' . $grow['id_produk']);
+        exit;
+    }
+}
+
 // AMBIL DATA EDIT
+$extra_images = [];
 if (isset($_GET['edit'])) {
     $id = intval($_GET['edit']);
     $stmt = $pdo->prepare("SELECT * FROM produk WHERE id_produk = ?");
     $stmt->execute([$id]);
     $edit_data = $stmt->fetch();
+    if ($edit_data) {
+        $eg_s = $pdo->prepare("SELECT id, gambar FROM produk_gambar WHERE id_produk=? ORDER BY urutan, id");
+        $eg_s->execute([$edit_data['id_produk']]);
+        $extra_images = $eg_s->fetchAll();
+    }
 }
 
 // SIMPAN (tambah atau edit)
@@ -192,6 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
                 "INSERT INTO produk (nama_produk,harga,stok,deskripsi_produk,gambar_produk,jenis_produk,ukuran)
                  VALUES (?,?,?,?,?,?,?)"
             )->execute([$nama,$harga,$stok,$desk,$gambar,$jenis,$ukuran_data]);
+            simpanGambarTambahan((int)$pdo->lastInsertId(), $pdo);
             $msg_ok = 'Produk "'.htmlspecialchars($nama).'" berhasil ditambahkan!';
         } elseif ($_POST['aksi'] === 'edit') {
             $id = intval($_POST['id_produk']);
@@ -199,13 +248,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
                 "UPDATE produk SET nama_produk=?,harga=?,stok=?,deskripsi_produk=?,gambar_produk=?,jenis_produk=?,ukuran=?
                  WHERE id_produk=?"
             )->execute([$nama,$harga,$stok,$desk,$gambar,$jenis,$ukuran_data,$id]);
+            simpanGambarTambahan($id, $pdo);
             $msg_ok = 'Produk berhasil diperbarui!';
             $edit_data = null;
         }
     }
 }
 
-$produk_list = $pdo->query("SELECT * FROM produk ORDER BY id_produk DESC")->fetchAll();
+$produk_list = $pdo->query(
+    "SELECT p.*, (SELECT COUNT(*) FROM produk_gambar pg WHERE pg.id_produk=p.id_produk) AS jml_gambar_tambahan
+     FROM produk p ORDER BY p.id_produk DESC"
+)->fetchAll();
 ?>
 
 <?php if ($msg_ok):  ?><div class="alert-ok"><i class="fas fa-check-circle"></i> <?= $msg_ok ?></div><?php endif; ?>
@@ -274,7 +327,7 @@ $produk_list = $pdo->query("SELECT * FROM produk ORDER BY id_produk DESC")->fetc
                 </select>
             </div>
             <div class="fg fg-full">
-                <label>Gambar Produk <span style="color:#9ca3af;font-weight:400;">(JPG/PNG/WEBP, maks 2MB)</span></label>
+                <label>Gambar Utama <span style="color:#9ca3af;font-weight:400;">(JPG/PNG/WEBP, maks 2MB)</span></label>
                 <input type="file" name="gambar_file" accept=".jpg,.jpeg,.png,.webp" onchange="previewImg(this)">
                 <div class="img-preview-box">
                     <?php if (!empty($edit_data['gambar_produk'])): ?>
@@ -285,6 +338,25 @@ $produk_list = $pdo->query("SELECT * FROM produk ORDER BY id_produk DESC")->fetc
                     <img id="imgPreview" class="img-preview" style="display:none;" alt="Preview">
                     <?php endif; ?>
                 </div>
+            </div>
+            <div class="fg fg-full">
+                <label>Gambar Tambahan <span style="color:#9ca3af;font-weight:400;">(opsional · bisa pilih lebih dari 1 · maks 2MB/gambar)</span></label>
+                <?php if (!empty($extra_images)): ?>
+                <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.625rem;">
+                    <?php foreach ($extra_images as $eg): ?>
+                    <div style="position:relative;display:inline-block;">
+                        <img src="../assets/images/products/<?= htmlspecialchars($eg['gambar']) ?>"
+                             style="width:64px;height:64px;object-fit:cover;border-radius:.5rem;border:1.5px solid #e5e7eb;">
+                        <a href="kelola_produk.php?hapus_gambar=<?= $eg['id'] ?>&edit=<?= $edit_data['id_produk'] ?>"
+                           onclick="return confirm('Hapus gambar ini?')"
+                           style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:#dc2626;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;text-decoration:none;line-height:1;">×</a>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+                <input type="file" name="extra_images[]" accept=".jpg,.jpeg,.png,.webp" multiple onchange="previewExtraImgs(this)">
+                <div style="font-size:.68rem;color:#9ca3af;margin-top:.25rem;">Tahan Ctrl / Cmd untuk memilih beberapa file sekaligus</div>
+                <div id="extraImgPreview" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;"></div>
             </div>
             <div class="fg fg-full">
                 <label>Deskripsi Produk</label>
@@ -410,12 +482,17 @@ $produk_list = $pdo->query("SELECT * FROM produk ORDER BY id_produk DESC")->fetc
             data-jenis="<?= htmlspecialchars($p['jenis_produk'] ?? '') ?>">
             <td class="t-sub"><?= $i + 1 ?></td>
             <td>
-                <?php if (!empty($p['gambar_produk'])): ?>
-                <img src="../assets/images/products/<?= htmlspecialchars($p['gambar_produk']) ?>"
-                     class="thumb-img" alt="">
-                <?php else: ?>
-                <div class="no-thumb"><i class="fas fa-tshirt" style="color:#e8a67a;"></i></div>
-                <?php endif; ?>
+                <div style="position:relative;display:inline-block;">
+                    <?php if (!empty($p['gambar_produk'])): ?>
+                    <img src="../assets/images/products/<?= htmlspecialchars($p['gambar_produk']) ?>"
+                         class="thumb-img" alt="">
+                    <?php else: ?>
+                    <div class="no-thumb"><i class="fas fa-tshirt" style="color:#e8a67a;"></i></div>
+                    <?php endif; ?>
+                    <?php if ($p['jml_gambar_tambahan'] > 0): ?>
+                    <span style="position:absolute;bottom:-4px;right:-4px;background:#953b22;color:white;font-size:.55rem;font-weight:700;padding:.1rem .35rem;border-radius:.25rem;line-height:1.4;">+<?= $p['jml_gambar_tambahan'] ?></span>
+                    <?php endif; ?>
+                </div>
             </td>
             <td class="t-name"><?= htmlspecialchars($p['nama_produk']) ?></td>
             <td>
@@ -627,6 +704,22 @@ function previewImg(input) {
         };
         r.readAsDataURL(input.files[0]);
     }
+}
+
+function previewExtraImgs(input) {
+    var box = document.getElementById('extraImgPreview');
+    box.innerHTML = '';
+    if (!input.files) return;
+    Array.from(input.files).forEach(function(file) {
+        var r = new FileReader();
+        r.onload = function(e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:.5rem;border:1.5px solid #e5e7eb;';
+            box.appendChild(img);
+        };
+        r.readAsDataURL(file);
+    });
 }
 
 function onReset() {
