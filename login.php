@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body{padding-top:0!important;}
         .login-page{min-height:100vh;background:linear-gradient(160deg,#ffffff 0%,#fff8f6 50%,#fce9e3 100%);display:flex;flex-direction:column;}
         .login-header{background:#7a3e2e;padding:1rem 1.5rem;display:flex;align-items:center;gap:.75rem;border-bottom:none;box-shadow:0 2px 12px rgba(0,0,0,.18);}
-        .login-header .logo{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1rem;}
+        .login-header .logo{height:36px;width:auto;display:block;}
         .login-header .brand{color:#ffffff;font-weight:700;font-size:1rem;font-family:'Playfair Display',Georgia,serif;}
         .login-header .sub{color:rgba(255,255,255,.7);font-size:.7rem;}
         .login-header a{margin-left:auto;color:rgba(255,255,255,.85);font-size:.75rem;text-decoration:none;}
@@ -84,14 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="login-page">
     <div class="login-header">
-        <div class="logo">E</div>
+        <img src="assets/images/ELEA STORE_20260604_100238_0000.png" alt="Elea Store" class="logo">
         <div><div class="brand">Elea Store</div><div class="sub">Fashion for All</div></div>
         <a href="index.php">← Beranda</a>
     </div>
     <div class="login-body">
         <div class="login-wrap">
             <div class="login-title">
-                <div class="store-icon"><i class="fas fa-shopping-bag"></i></div>
+                <img src="assets/images/ELEA STORE_20260604_100238_0000.png" alt="Elea Store" style="height:80px;width:auto;margin:0 auto .5rem;display:block;">
                 <h1>Masuk ke Elea Store</h1>
                 <p>Masukkan username dan password Anda</p>
             </div>
