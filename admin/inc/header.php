@@ -30,7 +30,7 @@ html,body{margin:0;padding:0;font-family:'Inter','Segoe UI',system-ui,-apple-sys
 .db-sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;display:flex;flex-direction:column;overflow-y:auto;z-index:50;}
 .sb-brand{padding:1.25rem;border-bottom:1px solid rgba(255,255,255,.12);}
 .sb-logo-row{display:flex;align-items:center;gap:.625rem;margin-bottom:.75rem;}
-.sb-logo{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:white;}
+.sb-logo{height:40px;width:auto;display:block;}
 .sb-name{font-weight:700;font-size:1rem;color:white;line-height:1.2;}
 .sb-sub{font-size:.75rem;color:rgba(255,255,255,.6);}
 .sb-user{display:flex;align-items:center;gap:.625rem;background:rgba(255,255,255,.12);border-radius:.625rem;padding:.625rem .75rem;}
@@ -128,7 +128,7 @@ input::-moz-placeholder,textarea::-moz-placeholder{color:#b8bfc9;opacity:1;}
 <aside class="db-sidebar" style="background:<?= $cfg['gradient'] ?>;">
     <div class="sb-brand">
         <div class="sb-logo-row">
-            <div class="sb-logo">E</div>
+            <img src="../assets/images/ELEA STORE_20260604_100238_0000.png" alt="Elea Store" class="sb-logo">
             <div><div class="sb-name">Elea Store</div><div class="sb-sub">Panel <?= $cfg['label'] ?></div></div>
         </div>
         <div class="sb-user">
