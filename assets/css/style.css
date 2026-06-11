@@ -1,0 +1,35 @@
+/* ============================================================
+   ELEA STORE — MAIN STYLESHEET ENTRY POINT
+   Butik Busana Muslim Premium | Tema Krem Elegan
+   ============================================================
+   Style dipisah per file sesuai halaman/komponen:
+     base.css       — variabel, reset, tipografi global
+     layout.css     — container
+     navbar.css     — navigasi
+     components.css — buttons, page-header, section-title, utilities
+     products.css   — product card
+     home.css       — hero, why-us, cta-banner (index.php)
+     katalog.css    — search bar, filter (katalog.php)
+     preorder.css   — steps, po-card (preorder.php)
+     tentang.css    — about, values, stats (tentang.php)
+     kontak.css     — contact form (kontak.php)
+     auth.css       — login/register pelanggan & admin (login.php)
+     dashboard.css  — sidebar, stat cards, tables (admin/kasir/owner)
+     footer.css     — footer
+     responsive.css — semua media queries
+   ============================================================ */
+
+@import 'base.css';
+@import 'layout.css';
+@import 'navbar.css';
+@import 'components.css';
+@import 'products.css';
+@import 'home.css';
+@import 'katalog.css';
+@import 'preorder.css';
+@import 'tentang.css';
+@import 'kontak.css';
+@import 'auth.css';
+@import 'dashboard.css';
+@import 'footer.css';
+@import 'responsive.css';

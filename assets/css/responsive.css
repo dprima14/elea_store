@@ -1,0 +1,70 @@
+/* ============================================================
+   ELEA STORE — RESPONSIVE
+   Media queries untuk semua ukuran layar
+   ============================================================ */
+
+@media (max-width: 1024px) {
+    .why-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .admin-left { display: none; }
+    .sidebar { width: 200px; }
+}
+
+@media (max-width: 768px) {
+    /* Navbar */
+    .navbar-links,
+    .navbar-actions { display: none; }
+    .navbar-toggle { display: block; }
+    .navbar-inner { height: 64px; padding: 0 1rem; }
+    .navbar-logo-img { height: 52px; margin-left: 0; }
+
+    /* Body & Hero — sinkronkan dengan navbar 64px */
+    body { padding-top: 64px; }
+    .hero { margin-top: -64px; padding-top: 72px; padding-bottom: 3rem; min-height: 85vh; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .hero-title { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+    .hero-desc { font-size: 0.9375rem; }
+    .hero-stats { gap: 1.25rem; }
+
+    /* Info singkat — 1 kolom di mobile */
+    .info-singkat-grid { grid-template-columns: 1fr; gap: 0.875rem; }
+
+    /* Sections */
+    .steps-grid { grid-template-columns: 1fr; }
+    .values-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .stats-banner { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-page { flex-direction: column; }
+    .sidebar { width: 100%; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* CTA */
+    .cta-banner { padding: 2rem 1.25rem; }
+    .cta-banner h3 { font-size: 1.25rem; }
+}
+
+@media (max-width: 480px) {
+    /* Navbar */
+    .navbar-inner { height: 56px; }
+    .navbar-logo-img { height: 44px; }
+
+    /* Body & Hero — sinkronkan dengan navbar 56px */
+    body { padding-top: 56px; }
+    .hero { margin-top: -56px; padding-top: 64px; min-height: 80vh; }
+    .hero-title { font-size: 1.75rem; }
+    .hero-buttons { flex-direction: column; align-items: stretch; }
+    .hero-buttons .btn { text-align: center; }
+    .hero-stats { gap: 1rem; }
+
+    /* Info singkat */
+    .info-singkat-grid { grid-template-columns: 1fr; }
+
+    /* Products */
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .why-grid { grid-template-columns: 1fr; }
+    .auth-form { padding: 1.25rem 1rem; }
+}

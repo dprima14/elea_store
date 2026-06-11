@@ -1,0 +1,187 @@
+/* ============================================================
+   ELEA STORE — NAVBAR
+   ============================================================ */
+
+.navbar-logo-img {
+    height: 84px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    margin-left: 4rem;
+}
+
+.navbar {
+    background: rgba(255,252,249,0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 16px rgba(0,0,0,0.07);
+    border-bottom: 1px solid rgba(245,212,203,0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.navbar-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--grad-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: white;
+}
+
+.navbar-brand-text .brand-name {
+    color: var(--pink-800);
+    font-weight: 700;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+
+.navbar-brand-text .brand-sub {
+    color: var(--pink-500);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.navbar-links a {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pink-700);
+    transition: all 0.2s;
+}
+
+.navbar-links a:hover,
+.navbar-links a.active {
+    background: rgba(122,62,46,0.08);
+    color: var(--pink-800);
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-nav-login {
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--pink-700);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 1.5px solid var(--pink-300);
+    cursor: pointer;
+}
+
+.btn-nav-login:hover {
+    background: var(--pink-50);
+    color: var(--pink-800);
+    border-color: var(--pink-400);
+}
+
+.btn-nav-admin {
+    padding: 0.5rem 1.375rem;
+    border-radius: var(--radius-full);
+    background: var(--grad-pink);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(122,46,34,0.25);
+}
+
+.btn-nav-admin:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.navbar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--pink-700);
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.navbar-mobile {
+    display: none;
+    background: rgba(255,252,249,0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 0.75rem 1.5rem 1rem;
+    border-top: 1px solid var(--pink-100);
+}
+
+.navbar-mobile a {
+    display: block;
+    padding: 0.625rem 0;
+    color: var(--pink-700);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--pink-100);
+}
+
+.navbar-mobile a:last-child { border-bottom: none; }
+
+.navbar-mobile-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.navbar-mobile-actions a {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-bottom: none !important;
+}
+
+.mobile-btn-login {
+    background: transparent;
+    color: var(--pink-700);
+    border: 1.5px solid var(--pink-300);
+}
+
+.mobile-btn-admin {
+    background: var(--grad-pink);
+    color: white;
+    border: none;
+}

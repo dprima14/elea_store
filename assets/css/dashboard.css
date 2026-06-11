@@ -1,0 +1,225 @@
+/* ============================================================
+   ELEA STORE — DASHBOARD
+   Sidebar, stat cards, orders table
+   ============================================================ */
+
+.dashboard-page { display: flex; min-height: 100vh; font-size: 0.875rem; }
+
+.sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 0;
+}
+
+.sidebar-brand-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.sidebar-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.sidebar-brand .name { font-weight: 700; font-size: 0.875rem; }
+.sidebar-brand .sub { color: rgba(255,255,255,0.6); font-size: 0.65rem; }
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem 0.75rem;
+}
+
+.sidebar-user .icon { font-size: 1.125rem; }
+.sidebar-user .user-role { font-size: 0.75rem; font-weight: 600; }
+.sidebar-user .user-status { font-size: 0.6rem; color: rgba(255,255,255,0.6); }
+
+.sidebar-nav { flex: 1; padding: 0.75rem; }
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-lg);
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 2px;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar-nav a .nav-icon { font-size: 1rem; flex-shrink: 0; }
+
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-footer a {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    color: rgba(255,255,255,0.7);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.sidebar-footer a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+.dashboard-content { flex: 1; overflow: auto; background: #f9fafb; }
+
+.dashboard-header {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+}
+
+.dashboard-header h1 { font-weight: 700; color: var(--gray-800); font-size: 1rem; }
+.dashboard-header p { font-size: 0.7rem; color: var(--gray-400); margin-top: 0.125rem; }
+
+.header-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+.header-actions a {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    border: 1px solid var(--gray-200);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    transition: color 0.2s;
+}
+
+.header-actions a:hover { color: var(--gray-600); }
+
+.header-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+.dashboard-body { padding: 2rem; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.25rem;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+
+.stat-card:hover { box-shadow: var(--shadow-md); }
+
+.stat-card-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.stat-card-icon { font-size: 1.25rem; }
+
+.stat-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+}
+
+.badge-green { background: #f0fdf4; color: #16a34a; }
+.badge-red { background: #fef2f2; color: #dc2626; }
+
+.stat-card-value { font-size: 1.25rem; font-weight: 700; color: var(--gray-800); }
+.stat-card-label { font-size: 0.7rem; color: var(--gray-400); margin-top: 0.25rem; }
+
+.orders-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-200);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.orders-card h2 { font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; font-size: 0.9375rem; }
+
+.orders-table { width: 100%; border-collapse: collapse; }
+
+.orders-table tbody tr { border-bottom: 1px solid #f3f4f6; }
+.orders-table tbody tr:last-child { border-bottom: none; }
+
+.order-row td { padding: 0.75rem 0; vertical-align: middle; }
+
+.order-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 0.75rem;
+}
+
+.order-info-cell { display: flex; align-items: center; }
+.order-name { font-weight: 500; color: var(--gray-700); font-size: 0.875rem; }
+.order-meta { font-size: 0.7rem; color: var(--gray-400); }
+.order-amount { font-weight: 700; color: var(--gray-800); font-size: 0.875rem; }
+
+.order-status {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-full);
+}
+
+.status-baru { background: #fbecde; color: var(--pink-700); }
+.status-diproses { background: #fffbeb; color: #d97706; }
+.status-dikirim { background: #eff6ff; color: #2563eb; }
+.status-selesai { background: #f0fdf4; color: #16a34a; }

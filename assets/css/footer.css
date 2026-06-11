@@ -1,0 +1,31 @@
+/* ============================================================
+   ELEA STORE — FOOTER
+   ============================================================ */
+
+.footer {
+    background: var(--grad-pink-dark);
+    color: white;
+    padding: 2.5rem 0;
+    margin-top: auto;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.footer-brand p { color: rgba(255,255,255,0.7); font-size: 0.875rem; line-height: 1.6; margin-top: 0.5rem; }
+.footer-col h4 { font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 0.75rem; font-size: 0.9375rem; }
+.footer-col a { display: block; color: rgba(255,255,255,0.65); font-size: 0.875rem; margin-bottom: 0.375rem; transition: color 0.2s; }
+.footer-col a:hover { color: white; }
+.footer-col p { color: rgba(255,255,255,0.65); font-size: 0.875rem; margin-bottom: 0.25rem; }
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+}

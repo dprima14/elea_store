@@ -1,0 +1,11 @@
+# Environment & konfigurasi lokal berisi kunci API — jangan di-commit
+.env
+config/midtrans.local.php
+config/midtrans.env
+
+# File sistem
+.DS_Store
+Thumbs.db
+
+# Log & cache
+*.log
