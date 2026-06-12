@@ -374,7 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
                         <td class="t-name"><?= htmlspecialchars($p['nama']) ?></td>
                         <td><span class="tbadge" style="background:#f3f4f6;color:#374151;"><?= $p['cat'] ?></span></td>
                         <td class="t-bold"><?= $p['harga'] ?></td>
-                        <td><span class="tbadge <?= $p['stok']>10?'stok-ok':($p['stok']>0?'stok-low':'stok-out') ?>"><?= $p['stok']>0?$p['stok'].' unit':'Habis' ?></span></td>
+                        <td><span class="tbadge <?= $p['stok']>=5?'stok-ok':($p['stok']>0?'stok-low':'stok-out') ?>"><?= $p['stok']>0?$p['stok'].' unit':'Habis' ?></span></td>
                         <td class="t-sub"><?= $p['terjual'] ?> terjual</td>
                         <td>
                             <button class="btn-sm" style="background:#fff8f6;color:#7a2e22;padding:.25rem .625rem;font-size:.7rem;" onclick="alert('Edit produk — fitur database diisi saat implementasi')">Edit</button>
@@ -401,7 +401,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
                     <tr>
                         <td class="t-name"><?= htmlspecialchars($p['nama']) ?></td>
                         <td><span class="tbadge" style="background:#f3f4f6;color:#374151;"><?= $p['cat'] ?></span></td>
-                        <td><span class="tbadge <?= $p['stok']>10?'stok-ok':($p['stok']>0?'stok-low':'stok-out') ?>"><?= $p['stok']>0?$p['stok'].' unit':'Habis' ?></span></td>
+                        <td><span class="tbadge <?= $p['stok']>=5?'stok-ok':($p['stok']>0?'stok-low':'stok-out') ?>"><?= $p['stok']>0?$p['stok'].' unit':'Habis' ?></span></td>
                         <td><input type="number" min="1" placeholder="Jumlah" style="width:80px;padding:.25rem .5rem;border:1px solid #e5e7eb;border-radius:.375rem;font-size:.75rem;"></td>
                         <td><button class="btn-sm" style="background:<?= $cfg['gradient'] ?>;color:white;padding:.25rem .75rem;font-size:.75rem;" onclick="alert('Stok diperbarui — simpan ke DB saat implementasi')">Tambah</button></td>
                     </tr>

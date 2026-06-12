@@ -230,7 +230,7 @@ function toggleExportCard() {
                 <td class="t-name"><?= htmlspecialchars($p['nama_produk']) ?></td>
                 <td class="t-bold"><?= fmt_rp((int)$p['harga']) ?></td>
                 <td>
-                    <span class="tbadge <?= $p['stok']>10?'stok-ok':($p['stok']>0?'stok-low':'stok-out') ?>">
+                    <span class="tbadge <?= $p['stok']>=5?'stok-ok':($p['stok']>0?'stok-low':'stok-out') ?>">
                         <?= $p['stok'] > 0 ? $p['stok'].' unit' : 'Habis' ?>
                     </span>
                 </td>

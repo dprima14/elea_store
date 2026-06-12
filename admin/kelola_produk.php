@@ -511,7 +511,7 @@ $produk_list = $pdo->query(
                     <?php foreach ($uk_arr as $uk): ?>
                     <span style="font-size:.7rem;display:flex;gap:.375rem;align-items:center;">
                         <span style="font-weight:600;color:#374151;min-width:24px;"><?= htmlspecialchars($uk['uk']) ?></span>
-                        <span class="tbadge <?= ($uk['stok'] ?? 0) > 5 ? 'stok-ok' : (($uk['stok'] ?? 0) > 0 ? 'stok-low' : 'stok-out') ?>"
+                        <span class="tbadge <?= ($uk['stok'] ?? 0) >= 5 ? 'stok-ok' : (($uk['stok'] ?? 0) > 0 ? 'stok-low' : 'stok-out') ?>"
                               style="font-size:.65rem;padding:.1rem .4rem;">
                             <?= ($uk['stok'] ?? 0) > 0 ? ($uk['stok'] ?? 0).' unit' : 'Habis' ?>
                         </span>
@@ -519,7 +519,7 @@ $produk_list = $pdo->query(
                     <?php endforeach; ?>
                 </div>
                 <?php else: ?>
-                <span class="tbadge <?= $p['stok'] > 10 ? 'stok-ok' : ($p['stok'] > 0 ? 'stok-low' : 'stok-out') ?>">
+                <span class="tbadge <?= $p['stok'] >= 5 ? 'stok-ok' : ($p['stok'] > 0 ? 'stok-low' : 'stok-out') ?>">
                     <?= $p['stok'] > 0 ? $p['stok'].' unit' : 'Habis' ?>
                 </span>
                 <?php endif; ?>
@@ -635,7 +635,7 @@ function openStokModal(id, nama, stokSaat, ukuranJson) {
         list.innerHTML = '';
         ukArr.forEach(function(uk) {
             var stok = uk.stok || 0;
-            var cls  = stok > 5 ? 'stok-ok' : (stok > 0 ? 'stok-low' : 'stok-out');
+            var cls  = stok >= 5 ? 'stok-ok' : (stok > 0 ? 'stok-low' : 'stok-out');
             var row  = document.createElement('div');
             row.className = 'stok-uk-card';
             row.style.cssText = 'display:grid;grid-template-columns:40px auto 1fr 80px;gap:.625rem;align-items:center;';

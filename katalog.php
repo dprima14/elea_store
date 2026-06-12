@@ -120,6 +120,8 @@ include 'includes/header.php';
                     <?php endif; ?>
                     <?php if ($p['stok'] == 0): ?>
                     <span class="product-badge" style="background:#dc2626;">HABIS</span>
+                    <?php elseif ($p['stok'] < 5): ?>
+                    <span class="product-badge" style="background:#d97706;">MENIPIS</span>
                     <?php elseif (!empty($p['jenis_produk'])): ?>
                     <span class="product-badge" style="background:rgba(0,0,0,.45);font-size:.6rem;"><?= htmlspecialchars($p['jenis_produk']) ?></span>
                     <?php endif; ?>

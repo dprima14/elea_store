@@ -348,7 +348,7 @@ require_once '../includes/header.php';
             <div class="divider-p"></div>
 
             <div class="spec-row">
-                <div class="spec-chip"><i class="fas fa-box"></i> Stok: <strong style="color:<?= $p['stok']>0?'#059669':'#dc2626' ?>"><?= $p['stok'] > 0 ? $p['stok'].' unit' : 'Habis' ?></strong></div>
+                <div class="spec-chip"><i class="fas fa-box"></i> Stok: <strong style="color:<?= $p['stok']>=5?'#059669':($p['stok']>0?'#d97706':'#dc2626') ?>"><?= $p['stok'] >= 5 ? $p['stok'].' unit' : ($p['stok'] > 0 ? $p['stok'].' unit (menipis)' : 'Habis') ?></strong></div>
                 <div class="spec-chip"><i class="fas fa-truck"></i> <strong>1-3 hari kerja</strong></div>
                 <div class="spec-chip"><i class="fas fa-sync-alt"></i> <strong>7 hari retur</strong></div>
             </div>

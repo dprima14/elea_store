@@ -41,7 +41,7 @@ $produk_list = $pdo->query("SELECT id_produk, nama_produk, stok FROM produk ORDE
         <tr>
             <td class="t-name"><?= htmlspecialchars($p['nama_produk']) ?></td>
             <td>
-                <span class="tbadge <?= $p['stok'] > 10 ? 'stok-ok' : ($p['stok'] > 0 ? 'stok-low' : 'stok-out') ?>">
+                <span class="tbadge <?= $p['stok'] >= 5 ? 'stok-ok' : ($p['stok'] > 0 ? 'stok-low' : 'stok-out') ?>">
                     <?= $p['stok'] > 0 ? $p['stok'].' unit' : 'Habis' ?>
                 </span>
             </td>

@@ -11,7 +11,7 @@ $produk_list = $pdo->query(
 
 $total_produk = count($produk_list);
 $stok_habis   = count(array_filter($produk_list, fn($p) => $p['stok'] == 0));
-$stok_menipis = count(array_filter($produk_list, fn($p) => $p['stok'] > 0 && $p['stok'] <= 10));
+$stok_menipis = count(array_filter($produk_list, fn($p) => $p['stok'] > 0 && $p['stok'] < 5));
 $stok_aman    = $total_produk - $stok_habis - $stok_menipis;
 ?>
 
@@ -54,14 +54,14 @@ $stok_aman    = $total_produk - $stok_habis - $stok_menipis;
             <td class="t-name"><?= htmlspecialchars($p['nama_produk']) ?></td>
             <td class="t-bold"><?= fmt_rp((int)$p['harga']) ?></td>
             <td>
-                <span class="tbadge <?= $p['stok'] > 10 ? 'stok-ok' : ($p['stok'] > 0 ? 'stok-low' : 'stok-out') ?>">
+                <span class="tbadge <?= $p['stok'] >= 5 ? 'stok-ok' : ($p['stok'] > 0 ? 'stok-low' : 'stok-out') ?>">
                     <?= $p['stok'] > 0 ? $p['stok'].' unit' : 'Habis' ?>
                 </span>
             </td>
             <td class="t-sub">
                 <?php if ($p['stok'] == 0): ?>
                 <span style="color:#dc2626;font-weight:600;">Perlu restock segera!</span>
-                <?php elseif ($p['stok'] <= 10): ?>
+                <?php elseif ($p['stok'] < 5): ?>
                 <span style="color:#d97706;">Stok menipis</span>
                 <?php else: ?>
                 <span style="color:#7a2e22;">Aman</span>
